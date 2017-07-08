@@ -20,15 +20,12 @@ namespace OrLog.Controllers
         }
 
         // GET: Stalk
-        public ActionResult Index()
+        public async Task<ActionResult> Index([FromQuery]string channel, [FromQuery]string nick)
         {
-            return View();
-        }
-        
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(string channel, string nick)
-        {
+            if (string.IsNullOrWhiteSpace(channel) || string.IsNullOrWhiteSpace(nick))
+            {
+                return View();
+            }
             try
             {
                 // TODO: Add insert logic here
@@ -45,6 +42,27 @@ namespace OrLog.Controllers
                 return View();
             }
         }
+        
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Index()
+        //{
+        //    try
+        //    {
+        //        // TODO: Add insert logic here
+        //        ViewBag.channel = channel;
+        //        ViewBag.nick = nick;
+        //        ViewBag.url = $"https://overrustlelogs.net/api/v1/{ViewBag.channel}/months.json";
+        //        var monthsjson = await _client.GetStringAsync($"https://overrustlelogs.net/api/v1/{ViewBag.channel}/months.json");
+        //        var months = JsonConvert.DeserializeObject<List<string>>(monthsjson);
+        //        ViewBag.months = months;
+        //        return View();
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
         
     }
 }

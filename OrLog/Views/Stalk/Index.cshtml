@@ -5,16 +5,23 @@
     ViewBag.Title = "Stalk";
     Layout = "_Layout";
 }
+@{
+    var channel = ViewBag.channel;
+    var nick = ViewBag.nick + ".txt";
+    var months = ViewBag.months;
+    var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick) && months != null;
+    Console.WriteLine(valid);
+}
 <br/>
 <div class="row">
-    <form class="col s12" asp-controller="Stalk" asp-action="Index">
+    <form class="col s12"  action="">
         <div class="row">
             <div class="input-field col s5">
-                <input placeholder="Channel" name="channel" type="text" class="validate">
+                <input name="channel" type="text" value="@channel">
                 <label for="first_name">Channel</label>
             </div>
             <div class="input-field col s5">
-                <input name="nick" type="text" >
+                <input name="nick" type="text" value="@ViewBag.nick">
                 <label for="nick">Nick</label>
             </div>
             <div class="input-field col s2">
@@ -25,22 +32,15 @@
         </div>
     </form>
     <br/>
-    @{
-        var channel = ViewBag.channel;
-        var nick = ViewBag.nick + ".txt";
-        var months = ViewBag.months;
-        var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick);
-        Console.WriteLine(valid);
-    }
     @if (valid)
     {
         for (int i = 0; i < months.Count; i++)
         {
+            var c = ".field" + i;
             if (i <= 9)
             {
-
-                <p>@i. @months[i]</p>
-                var c = ".field" + i;
+                <br />
+                <span>@i. @months[i]</span>
                 <div class="@c.Replace(".", string.Empty) text">
                 </div>
                 continue;
