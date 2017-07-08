@@ -19,9 +19,12 @@ body {
     background: #212121;
     color: #fff
 }
-
 nav {
     background-color: #212121
+}
+.btn, .btn-large {
+    background-color: #ff5722;
+    color: #fff
 }
 
 nav ul li.active {

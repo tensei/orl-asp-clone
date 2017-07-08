@@ -1,0 +1,81 @@
+﻿@using System
+@using System.Linq
+
+@{
+    ViewBag.Title = "Stalk";
+    Layout = "_Layout";
+}
+<br/>
+<div class="row">
+    <form class="col s12" asp-controller="Stalk" asp-action="Index">
+        <div class="row">
+            <div class="input-field col s5">
+                <input placeholder="Channel" name="channel" type="text" class="validate">
+                <label for="first_name">Channel</label>
+            </div>
+            <div class="input-field col s5">
+                <input name="nick" type="text" >
+                <label for="nick">Nick</label>
+            </div>
+            <div class="input-field col s2">
+                <button class="btn waves-effect waves-light" type="submit">
+                    Stalk
+                </button>
+            </div>
+        </div>
+    </form>
+    <br/>
+    @{
+        var channel = ViewBag.channel;
+        var nick = ViewBag.nick + ".txt";
+        var months = ViewBag.months;
+        var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick);
+        Console.WriteLine(valid);
+    }
+    @if (valid)
+    {
+        for (int i = 0; i < months.Count; i++)
+        {
+            if (i <= 9)
+            {
+
+                <p>@i. @months[i]</p>
+                var c = ".field" + i;
+                <div class="@c.Replace(".", string.Empty) text">
+                </div>
+                continue;
+            }
+            <p>
+                <a style="color: #fff" href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick">
+                    https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick
+                </a>
+            </p>
+        }
+        <script>
+            var myArr = @Html.Raw(Json.Serialize(ViewBag.months.ToArray()));
+            console.log(myArr);
+            for (i = 0; i < myArr.length; i++) {
+                if (i === 10) {
+                    break;
+                }
+                appendChunk(myArr[i], i);
+            }
+
+            function appendChunk(month, id) {
+                var req = new XMLHttpRequest();
+                req.onreadystatechange = handleStateChange;
+                req.open('GET', 'https://overrustlelogs.net/@channel chatlog/'+month+'/userlogs/@nick', true);
+                req.send();
+
+                function handleStateChange() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var text = req.responseText;
+                        console.log(id);
+                        $('<span />').text(text).appendTo('.field' + id);
+                    }
+                }
+            }
+        </script>
+    }
+    <div class="text"></div>
+</div>
