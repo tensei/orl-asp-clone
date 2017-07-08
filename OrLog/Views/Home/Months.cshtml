@@ -1,12 +1,14 @@
 ﻿@using System.Collections.Generic
 @{
-    ViewData["Title"] = "Channels";
+    ViewBag.Title = "Months";
 }
+
 <ul class="collection with-header">
-    @foreach (var ch in (List<string>) ViewData["channels"])
+    @foreach (var ch in (List<string>)ViewData["months"])
     {
-        <a class="collection-item" href="@ch" >
+        <a class="collection-item" href="/@ViewData["channel"]/@ch">
             <i class="fa fa-folder fa-fw" aria-hidden="true"></i><span>@ch</span>
         </a>
     }
 </ul>
+
