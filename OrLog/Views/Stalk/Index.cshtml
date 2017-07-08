@@ -1,5 +1,4 @@
 ﻿@using System
-@using System.Linq
 
 @{
     ViewBag.Title = "Stalk";
@@ -25,7 +24,7 @@
                 <label for="nick">Nick</label>
             </div>
             <div class="input-field col s2">
-                <button class="btn waves-effect waves-light" type="submit">
+                <button class="btn waves-effect waves-light deep-orange" type="submit">
                     Stalk
                 </button>
             </div>
@@ -40,16 +39,22 @@
             if (i <= 9)
             {
                 <br />
-                <span>@i. @months[i]</span>
+                <h5>@i. @months[i]</h5>
                 <div class="@c.Replace(".", string.Empty) text">
                 </div>
-                continue;
             }
-            <p>
-                <a style="color: #fff" href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick">
-                    https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick
-                </a>
-            </p>
+        }
+        if (months.Count > 9)
+        {
+            <br/>
+            <h5>More Months</h5>
+            <br/>
+            <div class="collection">
+                @for (var i = 10; i < months.Count; i++)
+                {
+                    <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick" class="collection-item">@months[i]</a>
+                }
+            </div>
         }
         <script>
             var myArr = @Html.Raw(Json.Serialize(ViewBag.months.ToArray()));
@@ -60,22 +65,27 @@
                 }
                 appendChunk(myArr[i], i);
             }
-
             function appendChunk(month, id) {
                 var req = new XMLHttpRequest();
                 req.onreadystatechange = handleStateChange;
-                req.open('GET', 'https://overrustlelogs.net/@channel chatlog/'+month+'/userlogs/@nick', true);
+                req.open('GET', 'https://overrustlelogs.net/' + capitalizeFirstLetter('@channel')+' chatlog/' + month +'/userlogs/@nick.ToLower()', true);
                 req.send();
 
+                function capitalizeFirstLetter(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                }
                 function handleStateChange() {
-                    if (this.readyState == 4 && this.status == 200) {
+                    if (this.readyState === 4 && this.status === 200) {
                         var text = req.responseText;
                         console.log(id);
                         $('<span />').text(text).appendTo('.field' + id);
+                    }
+                    if (this.readyState === 4 && this.status === 404) {
+                        console.log(id);
+                        $('.field' + id).remove();
                     }
                 }
             }
         </script>
     }
-    <div class="text"></div>
 </div>

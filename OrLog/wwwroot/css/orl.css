@@ -6,12 +6,7 @@ a:hover {
     color: #ff5722
 }
 
-.donate {
-    background-color: #ff5722
-}
-
 .donate:hover {
-    background-color: #ff5722;
     color: #fff
 }
 
@@ -21,10 +16,6 @@ body {
 }
 nav {
     background-color: #212121
-}
-.btn, .btn-large {
-    background-color: #ff5722;
-    color: #fff
 }
 
 nav ul li.active {
@@ -93,4 +84,31 @@ nav ul a:hover {
     font-style: italic;
     padding: 3px;
     margin: -3px;
+}
+/* label color */
+.input-field label {
+    color: #ff5722;
+}
+/* label focus color */
+.input-field input[type=text]:focus + label {
+    color: #ff5722;
+}
+/* label underline focus color */
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid #ff5722;
+    box-shadow: 0 1px 0 0 #ff5722;
+}
+/* valid color */
+.input-field input[type=text].valid {
+    border-bottom: 1px solid #ff5722;
+    box-shadow: 0 1px 0 0 #ff5722;
+}
+/* invalid color */
+.input-field input[type=text].invalid {
+    border-bottom: 1px solid #ff5722;
+    box-shadow: 0 1px 0 0 #ff5722;
+}
+/* icon prefix focus color */
+.input-field .prefix.active {
+    color: #ff5722;
 }
