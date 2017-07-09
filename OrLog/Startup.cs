@@ -46,7 +46,7 @@ namespace OrLog
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseStatusCodePagesWithRedirects("/");
             app.UseStaticFiles();
 
             app.UseMvc();

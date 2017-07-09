@@ -33,15 +33,34 @@
     <br/>
     @if (valid)
     {
+        <div class="col hide-on-small-only m3 l2" style="position: fixed; left: 10px; top: 60px">
+            <ul class="section table-of-contents">
+                <li><a href="#top">Top</a></li>
+                @for (int i = 0; i < months.Count; i++)
+                {
+                    if (i == 10)
+                    {
+                        <li><a href="#moremonths">More Months</a></li>
+                        break;
+                    }
+                    var s = "month" + i;
+                    <li><a href="#@s">@months[i]</a></li>
+                }
+            </ul>
+        </div>
         for (int i = 0; i < months.Count; i++)
         {
             var c = ".field" + i;
+            var p = ".progressbar" + i;
             var s = ".month" + i;
             if (i <= 9)
             {
-                <div class="section ">
-                    <h5>@i. @months[i]</h5>
+                <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
+                    <h5>@months[i]</h5>
                     <div class="@c.Replace(".", string.Empty) text"></div>
+                    <div class="progress deep-orange @p.Replace(".", string.Empty)">
+                        <div class="indeterminate orange"></div>
+                    </div>
                 </div>
                 <div class="divider" style="opacity: 0.6"></div>
             }
@@ -51,10 +70,10 @@
             <br/>
             <h5>More Months</h5>
             <div class="divider" style="opacity: 0.6"></div>
-            <div class="collection">
+            <div class="collection scrollspy" id="moremonths">
                 @for (var i = 10; i < months.Count; i++)
                 {
-                    <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick" class="collection-item">@months[i]</a>
+                    <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
                 }
             </div>
         }
@@ -70,22 +89,21 @@
             function appendChunk(month, id) {
                 var req = new XMLHttpRequest();
                 req.onreadystatechange = handleStateChange;
-                req.open('GET', 'https://overrustlelogs.net/' + capitalizeFirstLetter('@channel')+' chatlog/' + month +'/userlogs/@nick.ToLower()', true);
+                req.open('GET', 'https://overrustlelogs.net/@channel chatlog/' + month +'/userlogs/@nick', true);
                 req.send();
 
-                function capitalizeFirstLetter(string) {
-                    return string.charAt(0).toUpperCase() + string.slice(1);
-                }
                 function handleStateChange() {
                     var text;
                     if (this.readyState === 4 && this.status === 200) {
                         text = req.responseText;
                         console.log(id);
+                        $('.progressbar' + id).remove();
                         $('<span />').text(text).appendTo('.field' + id);
                     }
                     if (this.readyState === 4 && this.status === 404) {
                         text = req.responseText;
                         console.log(id);
+                        $('.progressbar' + id).remove();
                         $('<span />').text(text).appendTo('.field' + id);
                     }
                 }
