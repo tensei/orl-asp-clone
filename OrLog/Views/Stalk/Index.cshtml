@@ -13,17 +13,17 @@
 }
 <br/>
 <div class="row">
-    <form class="col s12"  action="">
+    <form action="">
         <div class="row">
-            <div class="input-field col s5">
+            <div class="input-field s12 m6 l3">
                 <input name="channel" type="text" value="@channel">
                 <label for="first_name">Channel</label>
             </div>
-            <div class="input-field col s5">
+            <div class="input-field s12 m6 l3">
                 <input name="nick" type="text" value="@ViewBag.nick">
                 <label for="nick">Nick</label>
             </div>
-            <div class="input-field col s2">
+            <div class="input-field s12 m6 l3">
                 <button class="btn waves-effect waves-light deep-orange" type="submit">
                     Stalk
                 </button>
@@ -36,19 +36,21 @@
         for (int i = 0; i < months.Count; i++)
         {
             var c = ".field" + i;
+            var s = ".month" + i;
             if (i <= 9)
             {
-                <br />
-                <h5>@i. @months[i]</h5>
-                <div class="@c.Replace(".", string.Empty) text">
+                <div class="section ">
+                    <h5>@i. @months[i]</h5>
+                    <div class="@c.Replace(".", string.Empty) text"></div>
                 </div>
+                <div class="divider" style="opacity: 0.6"></div>
             }
         }
         if (months.Count > 9)
         {
             <br/>
             <h5>More Months</h5>
-            <br/>
+            <div class="divider" style="opacity: 0.6"></div>
             <div class="collection">
                 @for (var i = 10; i < months.Count; i++)
                 {
@@ -75,14 +77,16 @@
                     return string.charAt(0).toUpperCase() + string.slice(1);
                 }
                 function handleStateChange() {
+                    var text;
                     if (this.readyState === 4 && this.status === 200) {
-                        var text = req.responseText;
+                        text = req.responseText;
                         console.log(id);
                         $('<span />').text(text).appendTo('.field' + id);
                     }
                     if (this.readyState === 4 && this.status === 404) {
+                        text = req.responseText;
                         console.log(id);
-                        $('.field' + id).remove();
+                        $('<span />').text(text).appendTo('.field' + id);
                     }
                 }
             }

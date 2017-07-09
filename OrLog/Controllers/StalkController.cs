@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace OrLog.Controllers
 {
-    [Route("stalk")]
+    [Route("/")]
     public class StalkController : Controller
     {
         private readonly HttpClient _client;
@@ -28,7 +28,6 @@ namespace OrLog.Controllers
             }
             try
             {
-                // TODO: Add insert logic here
                 ViewBag.channel = channel;
                 ViewBag.nick = nick;
                 ViewBag.url = $"https://overrustlelogs.net/api/v1/{ViewBag.channel}/months.json";
