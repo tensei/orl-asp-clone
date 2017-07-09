@@ -2,43 +2,40 @@
 
 @{
     ViewBag.Title = "Stalk";
-    Layout = "_Layout";
 }
 @{
     var channel = ViewBag.channel;
     var nick = ViewBag.nick + ".txt";
     var months = ViewBag.months;
     var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick) && months != null;
-    Console.WriteLine(valid);
 }
 <br/>
 <div class="row">
     <form action="">
         <div class="row">
-            <div class="input-field s12 m6 l3">
+            <div class="input-field col s5">
                 <input name="channel" type="text" value="@channel">
                 <label for="first_name">Channel</label>
             </div>
-            <div class="input-field s12 m6 l3">
+            <div class="input-field col s5">
                 <input name="nick" type="text" value="@ViewBag.nick">
                 <label for="nick">Nick</label>
             </div>
-            <div class="input-field s12 m6 l3">
-                <button class="btn waves-effect waves-light deep-orange" type="submit">
+            <div class="input-field col s2">
+                <button class="btn deep-orange" type="submit">
                     Stalk
                 </button>
             </div>
         </div>
     </form>
-    <br/>
     @if (valid)
     {
-        <div class="col hide-on-small-only m3 l2" style="position: fixed; left: 10px; top: 60px">
+        <div class="col hide-on-med-and-down m3 l2" style="position: fixed; left: 10px; top: 60px">
             <ul class="section table-of-contents">
                 <li><a href="#top">Top</a></li>
                 @for (int i = 0; i < months.Count; i++)
                 {
-                    if (i == 10)
+                    if (i == 8)
                     {
                         <li><a href="#moremonths">More Months</a></li>
                         break;
@@ -53,7 +50,7 @@
             var c = ".field" + i;
             var p = ".progressbar" + i;
             var s = ".month" + i;
-            if (i <= 9)
+            if (i <= 7)
             {
                 <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
                     <h5>@months[i]</h5>
@@ -65,13 +62,13 @@
                 <div class="divider" style="opacity: 0.6"></div>
             }
         }
-        if (months.Count > 9)
+        if (months.Count > 7)
         {
             <br/>
             <h5>More Months</h5>
             <div class="divider" style="opacity: 0.6"></div>
             <div class="collection scrollspy" id="moremonths">
-                @for (var i = 10; i < months.Count; i++)
+                @for (var i = 8; i < months.Count; i++)
                 {
                     <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
                 }
@@ -79,34 +76,22 @@
         }
         <script>
             var myArr = @Html.Raw(Json.Serialize(ViewBag.months.ToArray()));
-            console.log(myArr);
             for (i = 0; i < myArr.length; i++) {
-                if (i === 10) {
+                if (i === 8) {
                     break;
                 }
                 appendChunk(myArr[i], i);
             }
             function appendChunk(month, id) {
                 var req = new XMLHttpRequest();
-                req.onreadystatechange = handleStateChange;
                 req.open('GET', 'https://overrustlelogs.net/@channel chatlog/' + month +'/userlogs/@nick', true);
+                req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+                req.onload = function () {
+                    var text = req.responseText;
+                    $('.progressbar' + id).remove();
+                    $('<span />').text(text).appendTo('.field' + id);
+                };
                 req.send();
-
-                function handleStateChange() {
-                    var text;
-                    if (this.readyState === 4 && this.status === 200) {
-                        text = req.responseText;
-                        console.log(id);
-                        $('.progressbar' + id).remove();
-                        $('<span />').text(text).appendTo('.field' + id);
-                    }
-                    if (this.readyState === 4 && this.status === 404) {
-                        text = req.responseText;
-                        console.log(id);
-                        $('.progressbar' + id).remove();
-                        $('<span />').text(text).appendTo('.field' + id);
-                    }
-                }
             }
         </script>
     }

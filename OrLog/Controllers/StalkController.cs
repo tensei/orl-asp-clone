@@ -41,27 +41,5 @@ namespace OrLog.Controllers
                 return View();
             }
         }
-        
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Index()
-        //{
-        //    try
-        //    {
-        //        // TODO: Add insert logic here
-        //        ViewBag.channel = channel;
-        //        ViewBag.nick = nick;
-        //        ViewBag.url = $"https://overrustlelogs.net/api/v1/{ViewBag.channel}/months.json";
-        //        var monthsjson = await _client.GetStringAsync($"https://overrustlelogs.net/api/v1/{ViewBag.channel}/months.json");
-        //        var months = JsonConvert.DeserializeObject<List<string>>(monthsjson);
-        //        ViewBag.months = months;
-        //        return View();
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-        
     }
 }

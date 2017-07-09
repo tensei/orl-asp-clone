@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -38,17 +39,28 @@ namespace OrLog
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/");
             }
             app.UseStatusCodePagesWithRedirects("/");
             app.UseStaticFiles();
 
+            app.Use(async (context, next) =>
+            {
+                var ip = context.Request.Headers?["CF-Connecting-IP"] ??
+                         context.Connection?.RemoteIpAddress.ToString();
+                Console.WriteLine($"{context.Request?.Host} - {context.Request?.Path} - {context.Request.QueryString.Value} - {ip}");
+                await next.Invoke();
+            });
             app.UseMvc();
         }
     }
