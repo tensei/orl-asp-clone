@@ -96,6 +96,7 @@
                         req.open('GET', 'https://overrustlelogs.net/@channel chatlog/' + month + '/userlogs/@nick',
                             true);
                         req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+                        req.timeout = 4000;
                         req.onload = function() {
                             var text = req.responseText;
                             $('.progressbar' + id).remove();
