@@ -1,6 +1,4 @@
-﻿@using System
-
-@{
+﻿@{
     ViewBag.Title = "Stalk";
 }
 @{
@@ -9,29 +7,13 @@
     var months = ViewBag.months;
     var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick) && months != null;
 }
-<br/>
+
+
 <div class="row">
-    <form action="">
-        <div class="row">
-            <div class="input-field col s5">
-                <input name="channel" type="text" value="@channel">
-                <label for="first_name">Channel</label>
-            </div>
-            <div class="input-field col s5">
-                <input name="nick" type="text" value="@ViewBag.nick">
-                <label for="nick">Nick</label>
-            </div>
-            <div class="input-field col s2">
-                <button class="btn deep-orange" type="submit">
-                    Stalk
-                </button>
-            </div>
-        </div>
-    </form>
-    @if (valid)
-    {
-        <div class="col hide-on-med-and-down m3 l2" style="position: fixed; left: 10px; top: 60px">
-            <ul class="section table-of-contents">
+    <div class="col m1 l2 hide-on-med-and-down">
+        @if (valid)
+        {
+            <ul class="section table-of-contents pinned-top">
                 <li><a href="#top">Top</a></li>
                 @for (int i = 0; i < months.Count; i++)
                 {
@@ -44,55 +26,89 @@
                     <li><a href="#@s">@months[i]</a></li>
                 }
             </ul>
-        </div>
-        for (int i = 0; i < months.Count; i++)
-        {
-            var c = ".field" + i;
-            var p = ".progressbar" + i;
-            var s = ".month" + i;
-            if (i <= 7)
-            {
-                <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
-                    <h5>@months[i]</h5>
-                    <div class="@c.Replace(".", string.Empty) text"></div>
-                    <div class="progress deep-orange @p.Replace(".", string.Empty)">
-                        <div class="indeterminate orange"></div>
+        }
+    </div>
+    <div class="col s12 m12 l8 hide-on-large-only center-align">
+        <iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=48&l=ur1&category=amazonhomepage_2017&f=ifr&linkID=bbc7c334f3b99b4bf8cd119877973c49&t=orl02-20&tracking_id=orl02-20" width="728" height="90" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>
+    </div>
+    <div class="col s12 m12 l8">
+        <br/>
+        <div class="row">
+            <form action="">
+                <div class="row">
+                    <div class="input-field col s5">
+                        <input name="channel" type="text" value="@channel">
+                        <label for="first_name">Channel</label>
+                    </div>
+                    <div class="input-field col s5">
+                        <input name="nick" type="text" value="@ViewBag.nick">
+                        <label for="nick">Nick</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <button class="btn deep-orange" type="submit">
+                            Stalk
+                        </button>
                     </div>
                 </div>
-                <div class="divider" style="opacity: 0.6"></div>
-            }
-        }
-        if (months.Count > 7)
-        {
-            <br/>
-            <h5>More Months</h5>
-            <div class="divider" style="opacity: 0.6"></div>
-            <div class="collection scrollspy" id="moremonths">
-                @for (var i = 8; i < months.Count; i++)
+            </form>
+            @if (valid)
+            {
+                for (int i = 0; i < months.Count; i++)
                 {
-                    <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
+                    var c = ".field" + i;
+                    var p = ".progressbar" + i;
+                    var s = ".month" + i;
+                    if (i <= 7)
+                    {
+                        <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
+                            <h5>@months[i]</h5>
+                            <div class="@c.Replace(".", string.Empty) text"></div>
+                            <div class="progress deep-orange @p.Replace(".", string.Empty)">
+                                <div class="indeterminate orange"></div>
+                            </div>
+                        </div>
+                        <div class="divider" style="opacity: 0.6"></div>
+                    }
                 }
-            </div>
-        }
-        <script>
-            var myArr = @Html.Raw(Json.Serialize(ViewBag.months.ToArray()));
-            for (i = 0; i < myArr.length; i++) {
-                if (i === 8) {
-                    break;
+                if (months.Count > 7)
+                {
+                    <br/>
+                    <h5 id="moremonths">More Months</h5>
+                    <div class="divider" style="opacity: 0.6"></div>
+                    <div class="collection scrollspy">
+                        @for (var i = 8; i < months.Count; i++)
+                        {
+                            <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
+                        }
+                    </div>
                 }
-                appendChunk(myArr[i], i);
+                <script>
+                    var myArr = @Html.Raw(Json.Serialize(ViewBag.months.ToArray()));
+                    for (i = 0; i < myArr.length; i++) {
+                        if (i === 8) {
+                            break;
+                        }
+                        appendChunk(myArr[i], i);
+                    }
+
+                    function appendChunk(month, id) {
+                        var req = new XMLHttpRequest();
+                        req.open('GET', 'https://overrustlelogs.net/@channel chatlog/' + month + '/userlogs/@nick',
+                            true);
+                        req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+                        req.onload = function() {
+                            var text = req.responseText;
+                            $('.progressbar' + id).remove();
+                            $('<span />').text(text).appendTo('.field' + id);
+                        };
+                        req.send();
+                    }
+                </script>
             }
-            function appendChunk(month, id) {
-                var req = new XMLHttpRequest();
-                req.open('GET', 'https://overrustlelogs.net/@channel chatlog/' + month +'/userlogs/@nick', true);
-                req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-                req.onload = function () {
-                    var text = req.responseText;
-                    $('.progressbar' + id).remove();
-                    $('<span />').text(text).appendTo('.field' + id);
-                };
-                req.send();
-            }
-        </script>
-    }
+        </div>
+
+    </div>
+    <div class="col m1 l2 hide-on-med-and-down">
+        <iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=amazonhomepage_2017&f=ifr&linkID=4730b5aea11f768430c3244f9343d82e&t=orl02-20&tracking_id=orl02-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none; position: fixed" frameborder="0"></iframe>
+    </div>
 </div>
