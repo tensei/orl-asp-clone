@@ -1,5 +1,6 @@
-﻿@{
-    ViewBag.Title = "Stalk";
+﻿
+@{
+    ViewData["Title"] = "Stalk";
 }
 @{
     var channel = ViewBag.channel;
@@ -7,14 +8,29 @@
     var months = ViewBag.months;
     var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick) && months != null;
 }
-
+<script >
+    function appendChunk(month, id, nick, channel) {
+        const link = `https://overrustlelogs.net/${channel} chatlog/${month}/userlogs/${nick}`;
+        var req = new XMLHttpRequest();
+        req.open("GET", link, true);
+        req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+        $(`.progressbar${id}`).show();
+        req.onload = function () {
+            const text = req.responseText;
+            $(`.progressbar${id}`).hide();
+            $(`.field${id}`).empty();
+            $("<span />").text(text).appendTo(`.field${id}`);
+        };
+        req.send();
+    }
+</script>
 
 <div class="row">
     <div class="col m1 l2 hide-on-med-and-down">
         @if (valid)
         {
             <ul class="section table-of-contents pinned-top">
-                <li><a href="#top">Top</a></li>
+                <li><a href="#top">Latest</a></li>
                 @for (int i = 0; i < months.Count; i++)
                 {
                     if (i == 8)
@@ -38,7 +54,7 @@
                 <div class="row">
                     <div class="input-field col s5">
                         <input name="channel" type="text" value="@channel">
-                        <label for="first_name">Channel</label>
+                        <label for="channel">Channel</label>
                     </div>
                     <div class="input-field col s5">
                         <input name="nick" type="text" value="@ViewBag.nick">
@@ -53,57 +69,49 @@
             </form>
             @if (valid)
             {
-                for (int i = 0; i < months.Count; i++)
+                <div class="section scrollspy" id="latest">
+                    <h5>Latest  <span></span></h5>
+                    <div class="latest text">
+                        <span>@ViewBag.latest</span>
+                    </div>
+                </div>
+                <div class="divider" style="opacity: 0.6"></div>
+
+                for (var i = 0; i < months.Count; i++)
                 {
+                    if (i > 7)
+                    {
+                        break;
+                    }
                     var c = ".field" + i;
+                    var b = "btn" + i;
                     var p = ".progressbar" + i;
                     var s = ".month" + i;
-                    if (i <= 7)
-                    {
-                        <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
-                            <h5>@months[i]</h5>
-                            <div class="@c.Replace(".", string.Empty) text"></div>
-                            <div class="progress deep-orange @p.Replace(".", string.Empty)">
-                                <div class="indeterminate orange"></div>
-                            </div>
+                    <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
+                        <h5>@months[i]  <span><button class="waves-effect waves-orange btn-flat @b" onclick="appendChunk('@months[i]', @i, '@nick', '@channel')">Load</button></span></h5>
+                        <div class="@c.Replace(".", string.Empty) text"></div>
+                        <div class="progress deep-orange @p.Replace(".", string.Empty)" style="display: none">
+                            <div class="indeterminate orange"></div>
                         </div>
-                        <div class="divider" style="opacity: 0.6"></div>
-                    }
+                    </div>
+                    <div class="divider" style="opacity: 0.6"></div>
                 }
+                
+                <script>
+                    getLatest('@nick', '@channel');
+                </script>
                 if (months.Count > 7)
                 {
-                    <br/>
-                    <h5 id="moremonths">More Months</h5>
+                    <br id="moremonths" class="scrollspy"/>
+                    <h5 >More Months</h5>
                     <div class="divider" style="opacity: 0.6"></div>
-                    <div class="collection scrollspy">
+                    <div class="collection">
                         @for (var i = 8; i < months.Count; i++)
                         {
                             <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
                         }
                     </div>
                 }
-                <script>
-                    var myArr = @Html.Raw(Json.Serialize(ViewBag.months.ToArray()));
-                    for (i = 0; i < myArr.length; i++) {
-                        if (i === 8) {
-                            break;
-                        }
-                        appendChunk(myArr[i], i);
-                    }
-
-                    function appendChunk(month, id) {
-                        var req = new XMLHttpRequest();
-                        req.open('GET', 'https://overrustlelogs.net/@channel chatlog/' + month + '/userlogs/@nick',
-                            true);
-                        req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-                        req.onload = function() {
-                            var text = req.responseText;
-                            $('.progressbar' + id).remove();
-                            $('<span />').text(text).appendTo('.field' + id);
-                        };
-                        req.send();
-                    }
-                </script>
             }
         </div>
 

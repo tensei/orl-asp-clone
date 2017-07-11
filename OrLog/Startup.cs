@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OrLog.Utils;
 
 namespace OrLog
 {
@@ -30,7 +31,9 @@ namespace OrLog
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddSingleton<Cache>();
             services.AddTransient<HttpClient>();
+            services.AddTransient<HttpUtility>();
             services.AddMvc();
         }
 
@@ -53,14 +56,6 @@ namespace OrLog
             }
             app.UseStatusCodePagesWithRedirects("/");
             app.UseStaticFiles();
-
-            app.Use(async (context, next) =>
-            {
-                var ip = context.Request.Headers?["CF-Connecting-IP"] ??
-                         context.Connection?.RemoteIpAddress.ToString();
-                Console.WriteLine($"{context.Request?.Host} - {context.Request?.Path} - {context.Request.QueryString.Value} - {ip}");
-                await next.Invoke();
-            });
             app.UseMvc();
         }
     }

@@ -11,6 +11,7 @@
   <ItemGroup>
     <Content Include="wwwroot\css\orl.css" />
     <Content Include="wwwroot\css\orl.min.css" />
+    <Content Include="wwwroot\js\logfuncs.js" />
     <Content Include="wwwroot\js\orl.js" />
   </ItemGroup>
   <ItemGroup>
