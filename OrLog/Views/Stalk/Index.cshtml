@@ -6,6 +6,7 @@
     var channel = ViewBag.channel;
     var nick = ViewBag.nick + ".txt";
     var months = ViewBag.months;
+    var latest = ViewBag.latestmonth;
     var valid = !string.IsNullOrWhiteSpace(channel) && !string.IsNullOrWhiteSpace(nick) && months != null;
 }
 <script >
@@ -30,7 +31,7 @@
         @if (valid)
         {
             <ul class="section table-of-contents pinned-top">
-                <li><a href="#top">Latest</a></li>
+                <li><a href="#top">@latest</a></li>
                 @for (int i = 0; i < months.Count; i++)
                 {
                     if (i == 8)
@@ -69,8 +70,8 @@
             </form>
             @if (valid)
             {
-                <div class="section scrollspy" id="latest">
-                    <h5>Latest  <span></span></h5>
+                <div class="section scrollspy" id="top">
+                    <h5>@latest <span></span></h5>
                     <div class="latest text">
                         <span>@ViewBag.latest</span>
                     </div>
@@ -88,7 +89,7 @@
                     var p = ".progressbar" + i;
                     var s = ".month" + i;
                     <div class="section scrollspy" id="@s.Replace(".", string.Empty)">
-                        <h5>@months[i]  <span><button class="waves-effect waves-orange btn-flat @b" onclick="appendChunk('@months[i]', @i, '@nick', '@channel')">Load</button></span></h5>
+                        <h5>@months[i] <span><button class="waves-effect waves-orange btn-flat @b" onclick="appendChunk('@months[i]', @i, '@nick', '@channel')">Load</button></span></h5>
                         <div class="@c.Replace(".", string.Empty) text"></div>
                         <div class="progress deep-orange @p.Replace(".", string.Empty)" style="display: none">
                             <div class="indeterminate orange"></div>
@@ -102,14 +103,16 @@
                 </script>
                 if (months.Count > 7)
                 {
-                    <br id="moremonths" class="scrollspy"/>
-                    <h5 >More Months</h5>
-                    <div class="divider" style="opacity: 0.6"></div>
-                    <div class="collection">
-                        @for (var i = 8; i < months.Count; i++)
-                        {
-                            <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
-                        }
+                    <div id="moremonths" class="scrollspy" >
+                        <br/>
+                        <h5>More Months</h5>
+                        <div class="divider" style="opacity: 0.6"></div>
+                        <div class="collection">
+                            @for (var i = 8; i < months.Count; i++)
+                            {
+                                <a href="https://overrustlelogs.net/@channel chatlog/@months[i]/userlogs/@nick.Replace(".txt", string.Empty)" class="collection-item">@months[i]</a>
+                            }
+                        </div>
                     </div>
                 }
             }

@@ -32,7 +32,10 @@ namespace OrLog
         {
             // Add framework services.
             services.AddSingleton<Cache>();
-            services.AddTransient<HttpClient>();
+            services.AddSingleton<HttpClient>();
+
+            var servicebuild = services.BuildServiceProvider();
+            servicebuild.GetService<HttpClient>().Timeout = TimeSpan.FromSeconds(5);
             services.AddTransient<HttpUtility>();
             services.AddMvc();
         }

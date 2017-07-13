@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -40,36 +41,48 @@ namespace OrLog.Controllers
                 var monthsurl = $"https://overrustlelogs.net/api/v1/{channel}/months.json";
                 ViewBag.url = monthsurl;
 
-                var isMonthCached = _cache.Get(monthsurl);
-                if (isMonthCached != null)
-                {
-                    var months = JsonConvert.DeserializeObject<List<string>>(isMonthCached);
-                    ViewBag.months = months;
-                }
-                else
-                {
-                    var monthsjson = await _client.GetStringAsync(monthsurl);
-                    var months = JsonConvert.DeserializeObject<List<string>>(monthsjson);
-                    ViewBag.months = months;
-                    _cache.Add(monthsjson, monthsurl);
-                }
-
                 var latesturl = $"https://overrustlelogs.net/{channel} chatlog/current/{nick}.txt";
-                var isLatestCached = _cache.Get(latesturl);
-                if (isLatestCached != null)
+                var log =  await _client.GetAsync(latesturl);
+                if (!log.IsSuccessStatusCode)
                 {
-                    ViewBag.latest = isLatestCached;
+                    Log();
+                    return View();
                 }
-                else
+                var logcontent = await log.Content.ReadAsStringAsync();
+                if (!logcontent.StartsWith("["))
                 {
-                    var log =  await _client.GetStringAsync(latesturl);
-                    ViewBag.latest = log;
-                    _cache.Add(log, latesturl);
+                    Log();
+                    return View();
                 }
+                var d = logcontent.Substring(1, 23).Replace("UTC", "-0000");
+                
+                var date = DateTime.Parse(d);
+                ViewBag.latest = logcontent;
+                var monthsjson = await _client.GetAsync(monthsurl);
+                var monthcontent = await monthsjson.Content.ReadAsStringAsync();
+                if (!monthsjson.IsSuccessStatusCode)
+                {
+                    Log();
+                    return View();
+                }
+                var months = JsonConvert.DeserializeObject<List<string>>(monthcontent);
+
+                ViewBag.latestmonth = date.ToString("MMMM yyyy");
+                var newmonths = new List<string>();
+                months.ForEach(m =>
+                {
+                    var mo = DateTime.Parse(m);
+
+                    if (mo < date && mo.ToString("Y") != date.ToString("Y"))
+                    {
+                        newmonths.Add(m);
+                    }
+                });
+                ViewBag.months = newmonths;
                 Log();
                 return View();
             }
-            catch
+            catch(Exception)
             {
                 Log();
                 return View();

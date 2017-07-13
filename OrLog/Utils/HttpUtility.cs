@@ -13,16 +13,15 @@ namespace OrLog.Utils
         public HttpUtility(HttpClient client)
         {
             _client = client;
-            _client.Timeout = TimeSpan.FromSeconds(5);
         }
 
-        public async Task<string> GetStringAsync(string url)
+        public async Task<HttpResponseMessage> GetAsync(string url)
         {
             try
             {
-                return await _client.GetStringAsync(url);
+                return await _client.GetAsync(url);
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
