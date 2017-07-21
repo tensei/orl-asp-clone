@@ -95,7 +95,7 @@ namespace OrLog.Controllers
             var elapsed = $"{_stopwatch.ElapsedMilliseconds} ms" ;
             var ip = HttpContext.Request.Headers?["CF-Connecting-IP"] ??
                      HttpContext.Connection?.RemoteIpAddress.ToString();
-            Console.WriteLine($"{HttpContext.Request?.Host} - {HttpContext.Request?.Path} - {HttpContext.Request.QueryString.Value} - {ip} in {elapsed}");
+            Console.WriteLine($"{HttpContext.Request.Method} {HttpContext.Request?.Host} - {HttpContext.Request?.Path}{HttpContext.Request.QueryString.Value} - {ip} in {elapsed}");
         }
     }
 }
