@@ -16,12 +16,10 @@ namespace OrLog.Controllers
     public class StalkController : Controller
     {
         private readonly HttpUtility _client;
-        private readonly Cache _cache;
         private readonly Stopwatch _stopwatch;
-        public StalkController(HttpUtility client, Cache cache)
+        public StalkController(HttpUtility client)
         {
             _client = client;
-            _cache = cache;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
         }

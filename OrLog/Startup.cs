@@ -31,7 +31,6 @@ namespace OrLog
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddSingleton<Cache>();
             services.AddSingleton<HttpClient>();
 
             var servicebuild = services.BuildServiceProvider();
