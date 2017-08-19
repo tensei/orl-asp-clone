@@ -8,22 +8,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using OrLog.Utils;
 
 namespace OrLog.Controllers
 {
     [Route("/")]
     public class StalkController : Controller
     {
-        private readonly HttpUtility _client;
-        private readonly Stopwatch _stopwatch;
-        public StalkController(HttpUtility client)
-        {
-            _client = client;
-            _stopwatch = new Stopwatch();
-            _stopwatch.Start();
-        }
-
         // GET: Stalk
         public async Task<ActionResult> Index([FromQuery]string channel, [FromQuery]string nick)
         {
@@ -31,7 +21,6 @@ namespace OrLog.Controllers
             ViewBag.nick = nick;
             if (string.IsNullOrWhiteSpace(channel) || string.IsNullOrWhiteSpace(nick))
             {
-                Log();
                 return View();
             }
             try
@@ -40,27 +29,20 @@ namespace OrLog.Controllers
                 ViewBag.url = monthsurl;
 
                 var latesturl = $"https://overrustlelogs.net/{channel} chatlog/current/{nick}.txt";
-                var log =  await _client.GetAsync(latesturl);
-                if (!log.IsSuccessStatusCode)
+
+                var logcontent = await GetString(latesturl);
+                if (logcontent == null || !logcontent.StartsWith("["))
                 {
-                    Log();
-                    return View();
-                }
-                var logcontent = await log.Content.ReadAsStringAsync();
-                if (!logcontent.StartsWith("["))
-                {
-                    Log();
                     return View();
                 }
                 var d = logcontent.Substring(1, 23).Replace("UTC", "-0000");
                 
                 var date = DateTime.Parse(d);
                 ViewBag.latest = logcontent;
-                var monthsjson = await _client.GetAsync(monthsurl);
-                var monthcontent = await monthsjson.Content.ReadAsStringAsync();
-                if (!monthsjson.IsSuccessStatusCode)
+                
+                var monthcontent = await GetString(monthsurl);
+                if (monthcontent == null)
                 {
-                    Log();
                     return View();
                 }
                 var months = JsonConvert.DeserializeObject<List<string>>(monthcontent);
@@ -77,23 +59,26 @@ namespace OrLog.Controllers
                     }
                 });
                 ViewBag.months = newmonths;
-                Log();
                 return View();
             }
             catch(Exception)
             {
-                Log();
                 return View();
             }
         }
 
-        private void Log()
+        private async Task<string> GetString(string url)
         {
-            _stopwatch.Stop();
-            var elapsed = $"{_stopwatch.ElapsedMilliseconds} ms" ;
-            var ip = HttpContext.Request.Headers?["CF-Connecting-IP"] ??
-                     HttpContext.Connection?.RemoteIpAddress.ToString();
-            Console.WriteLine($"{HttpContext.Request.Method} {HttpContext.Request?.Host} - {HttpContext.Request?.Path}{HttpContext.Request.QueryString.Value} - {ip} in {elapsed}");
+            using (var client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+                var log = await client.GetAsync(url);
+                if (log.IsSuccessStatusCode)
+                {
+                    return await log.Content.ReadAsStringAsync();
+                }
+                return null;
+            }
         }
     }
 }
