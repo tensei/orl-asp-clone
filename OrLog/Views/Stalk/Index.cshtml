@@ -51,7 +51,7 @@
     <div class="col s12 m12 l8">
         <br/>
         <div class="row">
-            <form action="">
+            <form method="get">
                 <div class="row">
                     <div class="input-field col s5">
                         <input name="channel" type="text" value="@channel">
@@ -61,13 +61,17 @@
                         <input name="nick" type="text" value="@ViewBag.nick">
                         <label for="nick">Nick</label>
                     </div>
-                    <div class="input-field col s2">
+                    <div class="input-field col s1">
                         <button class="btn deep-orange" type="submit">
                             Stalk
                         </button>
                     </div>
                 </div>
             </form>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.Error))
+            {
+                <h6>@ViewBag.Error</h6>
+            }
             @if (valid)
             {
                 <div class="section scrollspy" id="top">

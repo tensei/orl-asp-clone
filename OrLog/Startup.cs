@@ -53,7 +53,7 @@ namespace OrLog
                          context.Connection?.RemoteIpAddress.ToString();
                 await next.Invoke();
                 watch.Stop();
-                Console.WriteLine($"{context.Request.Method} {context.Request?.Host} - {context.Request?.Path}{context.Request.QueryString.Value} - {ip} in {watch.ElapsedMilliseconds}");
+                Console.WriteLine($"{context.Request.Method} {context.Request?.Host} - {context.Response.StatusCode} - {context.Request?.Path}{context.Request.QueryString.Value} - {ip} in {watch.ElapsedMilliseconds}");
             });
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
